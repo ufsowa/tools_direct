@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+
+rm *.avg
+
+for data in *.all; do
+    ./average.py $data
+done

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+
+
+
+cd ..
+
+cp -r avg ..
+
+cd ../avg
+
+ST=$PWD
+rm *.all
+rm *.avg

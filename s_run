@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+
+to_do(){
+for data in sample*; do
+    echo $data
+    BEG=$PWD
+    cd $data/scr_diff
+    echo "arg: " $1
+    if [ $1 -eq 0 ]; then
+	./gen_bin
+    elif [ $1 -eq 1 ]; then
+	cp -R -u -p $ST/scr_diff/average* .
+	./average
+    elif [ $1 -eq 2 ]; then
+	cp -R -u -p $ST/scr_diff/diffu .
+	cd diffu
+	./call_diff
+	cd ..
+    fi
+    cd $BEG
+done
+}
+
+cd ..
+
+to_do $1
+
+cd $ST

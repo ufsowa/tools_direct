@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+
+echo "preparing..."
+#./s_prep
+echo "binning..."
+./s_run 0
+echo "averaging..."
+#./s_run 1
+echo "diffusiong..."
+#./s_run 2
