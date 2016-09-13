@@ -48,7 +48,7 @@ for col in data[5:]:
     if(nr_col >= 5 and nr_col<=7):
 	tryb='plot'
 
-    tmp_x,tmp_y=tools.move_avg(x,y,2.0,1.0,2.0,tryb)
+    tmp_x,tmp_y=tools.move_avg(x,y,0.005,50.0,tryb)		#x,y, grid, step, how many points, plot/noplot
 #    new_x,new_y=tools.fit_data(x,y,1000,301,3)
 #    new_x,new_y=tools.move_avg(new_x,new_y,1.0,0.5,2.0)
 
