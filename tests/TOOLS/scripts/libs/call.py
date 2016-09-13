@@ -19,6 +19,7 @@ X_cent=[]
 X0_init=[]
 SAMPLE_BORDER=[]
 NORMA=[]
+TRYB=0;
 	#fit
 FIT_BORDER=[]			#keeps range for A profile y(x) if 0.0 |< x >| 1.0
 FIT=[]		#keeps polynominal representation for A profile
@@ -39,7 +40,7 @@ def x0(hist):
     reset_global_var();
     x=0.0
     global STEP; global TIME; global X_cent; global X0_init; global NORMA; global SAMPLE_BORDER;
-    global FIT_BORDER; global FIT;
+    global FIT_BORDER; global FIT; global TRYB;
     TIME=hist[0][1]
     STEP=hist[0][0]
     X=hist[:,2]
@@ -70,9 +71,10 @@ def x0(hist):
 #    Xa,aCA=prep.move_avg(x,nCA,dX,1.0,2.0);
     Xa=x;aCA=nCA;aCB=nCB;
 
-    prep.plot(x,(nCA,nCB))
-    prep.plot(Xa,(aCA,aCB))
-    prep.plt.show()
+    if(TRYB):
+	prep.plot(x,(nCA,nCB))
+	prep.plot(Xa,(aCA,aCB))
+	prep.plt.show()
 
 #    CB=prep.trans_data(aCB);
 #    CA=prep.trans_data(aCA);
@@ -96,14 +98,13 @@ def x0(hist):
     first_fit_A=prep.fit_data(x,nCA,order='linear')
     first_fit_Ai=prep.fit_data(nCA,x,order='linear')
 
-    prep.plot(nCA,(first_fit_Ai(nCA),),'-')
-    prep.plot(nCA,(x,),'.')
-    prep.plt.show()
-
-    prep.plot(x,(first_fit_A(x),),'-')
-    prep.plot(x,(nCA,),'.')
-
-    prep.plt.show()
+    if(TRYB):
+	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
+	prep.plot(nCA,(x,),'.')
+	prep.plt.show()
+	prep.plot(x,(first_fit_A(x),),'-')
+	prep.plot(x,(nCA,),'.')
+	prep.plt.show()
 
     first_dyA=cal_poch(x,first_fit_A)
 
@@ -117,9 +118,10 @@ def x0(hist):
     fit_Ai=prep.fit_data(nCA,x,order='linear')
     FIT.append(fit_Ai);FIT.append(fit_A);
 
-    prep.plot(nCA,(first_fit_Ai(nCA),),'-')
-    prep.plot(nCA,(fit_Ai(nCA),),'-o')
-    prep.plt.show()
+    if(TRYB):
+	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
+	prep.plot(nCA,(fit_Ai(nCA),),'-o')
+	prep.plt.show()
 
 #    new_c=prep.myrange()
 #    yA=prep.functionXc(new_c,fit_Ai)
@@ -133,15 +135,17 @@ def x0(hist):
     dyA=cal_poch(x,fit_A)
 
     xtoplt=np.ones_like(dyA)*X_MOVE
-    prep.plt.plot(xtoplt,dyA,'-')
-    prep.plot(X,(first_dyA,),'.')
-    prep.plot(x,(dyA,),'.-')
-    prep.plt.show()
+
+    if(TRYB):
+	prep.plt.plot(xtoplt,dyA,'-')
+	prep.plot(X,(first_dyA,),'.')
+	prep.plot(x,(dyA,),'.-')
+	prep.plt.show()
 
     return 0
 
 def diff():
-    global X_MOVE, NORMA;
+    global X_MOVE, NORMA, TRYB;
     step=STEP;time=TIME
     p=X0_init
     x=X_cent
@@ -189,7 +193,8 @@ def diff():
 	OUT_DIF.write("\n")
     OUT_DIF.write("\n")
 
-    prep.plt.plot(STECH,DIFF); prep.plt.show();
+    if(TRYB):
+	prep.plt.plot(STECH,DIFF); prep.plt.show();
 
     return 0
 

@@ -147,49 +147,69 @@ def smooth_data(x,y,grid=1000,window=301,order=3,der=0,tryb='noplot'):
 
 
 def gaussian(i,j,dx):
-    return np.exp(-abs(i-j)/dx)
+    r=i-j;
+    A=1.0/(dx*np.sqrt(2.0*np.pi))
+    return A*np.exp(-(r*r/(2.0*dx*dx)))
 
-def move_avg(x,y,grid=1.0,step=1.0,ile=3,tryb='noplot'):
+def move_avg(x,y,step=1.0,ile=3,tryb='noplot'):
+    grid=x[1]-x[0]
     size=grid*ile
-    new_x = np.arange(min(x),max(x)+step,step)
-    new_y=[]; w =[];
-    for i in new_x:
+    dense_x = np.arange(min(x),max(x)+step,step)
+    new_x=[]; new_y=[]; w =[];
+    for i in dense_x:
 	new_size=size
-	tmp = x - i
-	zero = np.where(tmp == 0)[0]
-	left = np.where( (-size < tmp ) & (tmp < 0))[0]
-	right = np.where( (0 < tmp) & (tmp < size))[0]
+	tmp = np.around((x - i),decimals=5)							#tmp is the same as x shifted to new 0 located on i
+	zero = np.where( tmp == round(0.0,5))[0]
+	left = np.where( (round(-size,5) < tmp ) & (tmp < round(0.0,5)) )[0]
+	right = np.where( (round(0.0,5) < tmp ) & (tmp < round(size,5)) )[0]
 	idn=np.append(left,zero); idn=np.append(idn,right)
-
 	tmp_y0 = y[zero]; tmp_x0 = x[zero];
-	tmp_yl = y[left]; tmp_xl = x[left]; 
-	tmp_yr = y[right]; tmp_xr = x[right]; 
+	tmp_yl = y[left]; #tmp_xl = x[left]; 
+	tmp_yr = y[right]; #tmp_xr = x[right]; 
 	idl=np.where(np.isinf(tmp_yl))[0]; idr=np.where(np.isinf(tmp_yr))[0]
 	LS = len(idl); RS = len(idr);
 	if( LS > 0 or RS > 0):
 	    new_size=size*0.1
-	    left = np.where( (-new_size < tmp ) & (tmp < 0))[0]
-	    right = np.where( (0 < tmp) & (tmp < new_size))[0]
+	    left = np.where( (round(-new_size,5) < tmp ) & (tmp < round(0,5)))[0]
+	    right = np.where( (round(0,5) < tmp) & (tmp < round(new_size,5)))[0]
+#	    tmp_yl = y[left]; tmp_xl = x[left]; 
+#	    tmp_yr = y[right]; tmp_xr = x[right]; 
+#	    new_size=size
+
+#	tmp_x=np.append(tmp_xl,tmp_x0); tmp_x=np.append(tmp_x,tmp_xr)
+#	tmp_y=np.append(tmp_yl,tmp_y0); tmp_y=np.append(tmp_y,tmp_yr)
+
+	if(len(left)==0):
+	    left = np.where( (round(-grid,5) < tmp ) & (tmp < round(0,5)))[0]
+	if(len(right)==0):
+	    right = np.where( (round(0,5) < tmp) & (tmp < round(grid,5)))[0]
+
+#	if ( len(left) > len(right) ):
+#	    left=left[-len(right):]
+#	if ( len(left) < len(right) ):
+#	    right=right[:len(left)]
+
 	tmp_yl = y[left]; tmp_xl = x[left]; 
 	tmp_yr = y[right]; tmp_xr = x[right]; 
-#	idl=np.where(np.isinf(tmp_yl))[0]; idr=np.where(np.isinf(tmp_yr))[0]
 
 	tmp_x=np.append(tmp_xl,tmp_x0); tmp_x=np.append(tmp_x,tmp_xr)
 	tmp_y=np.append(tmp_yl,tmp_y0); tmp_y=np.append(tmp_y,tmp_yr)
 
-	if(len(tmp_y)==0):
-	    tmp_x = x[idn]
-	    tmp_y = y[idn]
-
-	w = [gaussian(i,j,size) for j in tmp_x]
-
-#	print i,left,zero,right
+#	print i,left,zero,right, -size, size
 #	print LS,RS,tmp_yl,tmp_yr
-#	print tmp_x,tmp_y,w
+#	print tmp_x,tmp_y
 
+#	plt.plot(tmp_x, gaussian(tmp_x,i,grid*0.5), '-', label= 'Raw curve')
+#	plt.plot(tmp, y, 'k.', label= "Shifted curve")
+#	plt.legend(loc='best')
+#	plt.show()
 
-	N =np.average(tmp_y,weights=w)
-	new_y.append(N)
+	if(len(tmp_y)>0):
+	    w = [gaussian(i,j,grid) for j in tmp_x]
+	    N =np.average(tmp_y,weights=w)
+	    new_x.append(i)
+	    new_y.append(N)
+
     if(tryb=='plot'):
 	fig, ax = plt.subplots(figsize=(13, 10))
 	ax.plot(x, y, 'r.', label= 'Unsmoothed curve')
@@ -264,7 +284,7 @@ def FWHM(X,Y,flag=True):
     if(flag):
 	d = (np.sign(half_max - np.array(Y[0:-1])) - np.sign(half_max - np.array(Y[1:])))/2.0
 	d=np.append(d,0)
-	plt.plot(X[0:len(d)],abs(d),X,yh,'-');plt.plot(X,Y);plt.show();
+#	plt.plot(X[0:len(d)],abs(d),X,yh,'-');plt.plot(X,Y);plt.show();
 	left_idx = X[d > 0][0]
 	right_idx = X[d < 0][-1]
 
