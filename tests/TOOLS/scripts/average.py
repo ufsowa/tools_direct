@@ -41,18 +41,18 @@ P=bP[0]-(bP[1])*2.5
 points = np.where((X > L)  & (X<P))
 x=X[points]
 
-DATA=[]; nr_col=5;
+DATA=[]; nr_col=10;
 for col in data[5:]:
     y=col[points]
     tryb='noplot'
     if(nr_col >= 5 and nr_col<=7):
 	tryb='plot'
 
-    tmp_x,tmp_y=tools.move_avg(x,y,0.005,50.0,tryb)		#x,y, grid, step, how many points, plot/noplot
+    new_x,new_y=tools.move_avg(x,y,0.05,20.0,tryb)		#x,y, grid, step, how many points, plot/noplot
 #    new_x,new_y=tools.fit_data(x,y,1000,301,3)
 #    new_x,new_y=tools.move_avg(new_x,new_y,1.0,0.5,2.0)
 
-    new_x,new_y=tools.smooth_data(tmp_x,tmp_y,1000,301,3,0,tryb)
+#    new_x,new_y=tools.smooth_data(tmp_x,tmp_y,1000,301,3,0,tryb)
 
     if(len(DATA)==0):
 	STEP=np.ones_like(new_x)*step

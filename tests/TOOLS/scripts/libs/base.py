@@ -284,7 +284,7 @@ def FWHM(X,Y,flag=True):
     if(flag):
 	d = (np.sign(half_max - np.array(Y[0:-1])) - np.sign(half_max - np.array(Y[1:])))/2.0
 	d=np.append(d,0)
-	plt.plot(X[0:len(d)],abs(d),X,yh,'-');plt.plot(X,Y);plt.show();
+#	plt.plot(X[0:len(d)],abs(d),X,yh,'-');plt.plot(X,Y);plt.show();
 	left_idx = X[d > 0][0]
 	right_idx = X[d < 0][-1]
 
