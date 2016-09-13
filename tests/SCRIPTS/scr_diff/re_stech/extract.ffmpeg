@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-ffmpeg -f image2 -i *.jpeg -r 20 -filter:v "setpts=20.0*PTS" move_c.mpeg
-
-#rm *.jpeg
