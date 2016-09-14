@@ -41,13 +41,13 @@ def x0(hist):
     x=0.0
     global STEP; global TIME; global X_cent; global X0_init; global NORMA; global SAMPLE_BORDER;
     global FIT_BORDER; global FIT; global TRYB;
-    TIME=hist[0][1]
     STEP=hist[0][0]
+    TIME=hist[0][1]
     X=hist[:,2]
     dX=X[1]-X[0]
     V=hist[:,3]
-    A=hist[:,4]
-    B=hist[:,5]
+    B=hist[:,4]
+    A=hist[:,5]
     TOT=A+B;
     ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
     cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
