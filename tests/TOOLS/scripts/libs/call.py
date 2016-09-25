@@ -19,7 +19,7 @@ X_cent=[]
 X0_init=[]
 SAMPLE_BORDER=[]
 NORMA=[]
-TRYB=0;
+TRYB=1;
 	#fit
 FIT_BORDER=[]			#keeps range for A profile y(x) if 0.0 |< x >| 1.0
 FIT=[]		#keeps polynominal representation for A profile
@@ -29,7 +29,7 @@ X_MOVE=0.0
 def reset_global_var():
     global STEP; STEP=0
     global TIME; TIME=0
-    global X0_init;X0_init=[]
+    global X0_init;X0_init=[]; X_cent=[]
     global SAMPLE_BORDER;SAMPLE_BORDER=[]
     global NORMA;NORMA=[]
     global FIT_BORDER;FIT_BORDER=[]
@@ -40,14 +40,14 @@ def x0(hist):
     reset_global_var();
     x=0.0
     global STEP; global TIME; global X_cent; global X0_init; global NORMA; global SAMPLE_BORDER;
-    global FIT_BORDER; global FIT; global TRYB;
+    global FIT_BORDER; global FIT;
     STEP=hist[0][0]
     TIME=hist[0][1]
     X=hist[:,2]
     dX=X[1]-X[0]
     V=hist[:,3]
-    B=hist[:,4]
-    A=hist[:,5]
+    A=hist[:,4]
+    B=hist[:,5]
     TOT=A+B;
     ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
     cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
@@ -61,7 +61,10 @@ def x0(hist):
     X0_init=prep.convolute_x0(x,CA,CB)
     x=x-X0_init[0]
 #    T=prep.ferc(x)
-#    prep.plot(x,(CA,CB))
+    if(TRYB):
+	prep.plot(x,(CA,CB))
+	prep.plt.show()
+
 
     nCA,norm_a=prep.norm_data(CA);
     nCB,norm_b=prep.norm_data(CB);
@@ -73,8 +76,9 @@ def x0(hist):
 
     if(TRYB):
 	prep.plot(x,(nCA,nCB))
-	prep.plot(Xa,(aCA,aCB))
+#	prep.plot(Xa,(aCA,aCB))
 	prep.plt.show()
+
 
 #    CB=prep.trans_data(aCB);
 #    CA=prep.trans_data(aCA);
@@ -128,9 +132,6 @@ def x0(hist):
 #    yB=functionXc(new_c,fit_B)
 #    dyA=cal_poch(new_c,fit_A)
 #    print len(aCA),len(x)
-#    prep.plot(aCA,(Xa,),'o')
-#    prep.plot(new_c,(yA,),'-')
-#    prep.plt.show()
 
     dyA=cal_poch(x,fit_A)
 
@@ -145,7 +146,6 @@ def x0(hist):
     return 0
 
 def diff():
-    global X_MOVE, NORMA, TRYB;
     step=STEP;time=TIME
     p=X0_init
     x=X_cent
@@ -156,7 +156,15 @@ def diff():
     norma=YL-YR;
 
     p0=p[0];pw=p[1];
-    DER_R=0.0
+    der_r=0.0
+
+
+    if(TRYB):
+	prep.plot(x,(a(x),),'o')
+	prep.plt.title('After:')
+	prep.plt.show()
+	prep.plot(a(x),(x,),'o')
+	prep.plt.show()
 
 
 #    new_c=np.arange(0.0,1.01,0.01)
@@ -174,19 +182,20 @@ def diff():
     for i in results:
 	OUT_VEL.write(" %f" % (i))
     OUT_VEL.write("\n")
-    STECH=[];DIFF=[];
+
+    STECH=[];DIFF=[];DER=[];X=[];
     for stech in np.arange(0.01,1.0,0.01):
 	x_tmp=prep.functionXc(stech,ai)
-	DER=cal_poch(x_tmp,a)
-	if(DER_R == 0.0 and np.isfinite(DER)):
-	    DER_R=DER
+	der=cal_poch(x_tmp,a)
+	if(der_r == 0.0 and np.isfinite(der)):
+	    der_r=der
 	INT,err=quad(prep.functionXc,a=0.0, b=stech, args=(ai))
-	coef=-0.5*INT/DER
-	corr=DER/DER_R
-#	stech=YR+stech*norma
-	STECH.append(stech);DIFF.append(coef)
+	coef=-0.5*INT/der
+	corr=der/der_r
+	stech=YR+stech*norma
+	STECH.append(stech);DIFF.append(coef);DER.append(der);X.append(x_tmp);
 #	print stech,INT,DER,coef
-	wynik=[x_tmp,stech,INT,DER,coef,corr]
+	wynik=[x_tmp,stech,INT,der,coef,corr]
 	OUT_DIF.write("%f %f" % (step,time))
 	for i in wynik:
 	    OUT_DIF.write(" %f" % (i))
@@ -194,7 +203,10 @@ def diff():
     OUT_DIF.write("\n")
 
     if(TRYB):
-	prep.plt.plot(STECH,DIFF); prep.plt.show();
+	prep.plt.title('Poch:')
+	prep.plt.plot(X,prep.functionCx(X,a)); prep.plt.show();
+	prep.plt.plot(X,DER); prep.plt.show();
+	prep.plt.plot(X,DIFF); prep.plt.show();
 
     return 0
 
@@ -203,11 +215,11 @@ def cal_poch(x,fit,x_m=0.0):
     try:
 	iterator = iter(x)
     except TypeError:
-	derr=derivative(prep.functionCx,x, dx=0.5, args=(fit,x_m), order=21)
+	derr=derivative(prep.functionCx,x, dx=0.5, args=(fit,x_m), order=5)
 	return derr
     else:
 	for i in x:
-	    derr=derivative(prep.functionCx,i, dx=0.5, args=(fit,x_m), order=21)
+	    derr=derivative(prep.functionCx,i, dx=0.5, args=(fit,x_m), order=5)
 	    DERR.append(derr)
 	return np.array(DERR)
 

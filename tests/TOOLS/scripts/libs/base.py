@@ -106,7 +106,9 @@ def fit_data(inx,iny,order=2):
     return fit
 
 def functionCx(x,fit,x0=0.0):
-    y=fit(x+x0)
+    shift_x = np.ones_like(x)*x0
+    new_x = x + shift_x
+    y=fit(new_x)
     return y
 
 def functionXc(c,fit,x0=0.0):

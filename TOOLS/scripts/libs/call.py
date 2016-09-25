@@ -61,6 +61,10 @@ def x0(hist):
     x=x-X0_init[0]
 #    T=prep.ferc(x)
 #    prep.plot(x,(CA,CB))
+#    prep.plt..show()
+#    in_e=input("exit?")
+#    if(in_e):
+#	exit();
 
     nCA,norm_a=prep.norm_data(CA);
     nCB,norm_b=prep.norm_data(CB);
