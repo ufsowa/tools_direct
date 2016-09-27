@@ -1,17 +1,10 @@
 
-	FILES='1000.avg 1000.step'
-	FILES1='1000.avg'
-	FILES2='1000.step'
-	print FILES
-#	set terminal wxt size 1800,900; unset key;
-#	set multiplot layout 1,4
-	plot [:] for [ data in FILES ] data u 4:($5/($7 + $5 + $6)) w p t data
-	plot [:] for [ data in FILES ] data u 4:($6/($7 + $6)) w p t data,for [ data in FILES ] data u 4:($7/($7 + $6)) w p t data
-	pause -1
-	plot [:] for [ data in FILES ] data u 3:8 w p, for [ data in FILES ] data u 3:9 w p, for [ data in FILES ] data u 3:10 w p
-	pause -1
-	plot [:] for [ data in FILES ] data u 3:14 w p, for [ data in FILES ] data u 3:15 w p, for [ data in FILES ] data u 3:16 w p
-#	unset multiplot
-	pause -1
+#	plot [0.1:0.9][:] '1000.coef' u 4:(($5+$6)) w l
+#	plot '1000.coef' u 4:5 w lp,'1000.coef' u 4:6 w lp,'1000.coef' u 4:(1.0/$8) w lp
 
+#	plot [0.1:0.9] '1000.coef' u (1.0-$4):(-(16.0*$6/$5)/$2) w lp
+	plot [0.1:0.9] '1000.coef' u ($4):($7/$2) w lp
+#	plot [0.1:0.9] '1000.coef' u 4:(($7 - 1.0/$8)) w lp
+
+	pause -1
     

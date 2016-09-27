@@ -56,6 +56,14 @@ def str2double(str_obj):
 #    print new
     return new,size
 
+def divide(a,b):
+    with np.errstate(divide='ignore', invalid='ignore'):
+	c = np.true_divide(a,b)
+	c[c == np.inf] = 0
+	c = np.nan_to_num(c)
+    return c
+
+
 def plot(x,y,stri='o'):
     iter=0
     for i in y:

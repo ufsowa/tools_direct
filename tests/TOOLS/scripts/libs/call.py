@@ -41,33 +41,35 @@ def x0(hist):
     x=0.0
     global STEP; global TIME; global X_cent; global X0_init; global NORMA; global SAMPLE_BORDER;
     global FIT_BORDER; global FIT;
+    #load data
     STEP=hist[0][0]
-    TIME=hist[0][1]
+    TIME=hist[1][0]
     XA=hist[3]
     XF=hist[2]
     V=hist[4]
     A=hist[5]
     B=hist[6]
     TOT=A+B;
-#    ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
-#    cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
-#    ca=np.array(ca); cb=np.array(cb);
-    ca=np.divide(A,TOT);    cb=np.divide(B,TOT)
-    TOT=A+B+V;cv=V/TOT;c=(A+B)/TOT
+    ca=prep.divide(A,TOT);    cb=prep.divide(B,TOT)
+    TOT=A+B+V;
+    cv=prep.divide(V,TOT);c=prep.divide((A+B),TOT)
+
+    #sinks
+    #flux intrinsic
+    #flux total
+
+    #define frame
     L=XA[0]
     P=XA[-1]
     SAMPLE_BORDER.append(L); SAMPLE_BORDER.append(P);
     x=XA
-#    CA=np.interp(x,XA,ca)
-#    CB=np.interp(x,XA,cb)
     X0_init=prep.convolute_x0(x,ca,cb)
     x=x-X0_init[0]
-#    T=prep.ferc(x)
+
     if(TRYB):
 	prep.plt.title("raw")
 	prep.plot(x,(ca,cb))
 	prep.plt.show()
-
 
     nCA,norm_a=prep.norm_data(ca);
     nCB,norm_b=prep.norm_data(cb);
@@ -82,7 +84,6 @@ def x0(hist):
 #	prep.plot(Xa,(aCA,aCB))
 	prep.plt.show()
 
-
 #    CB=prep.trans_data(aCB);
 #    CA=prep.trans_data(aCA);
 #    T=trans_data(T);
@@ -90,7 +91,6 @@ def x0(hist):
 
 #    garbage,CB=prep.move_avg(Xa,CB,dX,2.0,3.0);
 #    X,CA=prep.move_avg(Xa,CA,dX,2.0,3.0);
-
 
 #    fit_border_B=prep.set_borders(x,CB);
 #    fit_border_A=prep.set_borders(x,CA);
@@ -114,55 +114,43 @@ def x0(hist):
 	prep.plot(x,(nCA,),'.')
 	prep.plt.show()
 
-    first_dyA=cal_poch(x,first_fit_A)
-
     X_MOVE=optimal(first_fit_Ai);
+    X0_init[0] -= X_MOVE
     x=x+X_MOVE
     X_cent=x
+    xf=XF-X0_init[0]
 
 #   make all fits
     fit_A=prep.fit_data(x,nCA,order='linear')
     fit_Ai=prep.fit_data(nCA,x,order='linear')
     FIT.append(fit_Ai);FIT.append(fit_A);
 
-    x_shift=X_cent - XA
-    prep.plot(XA,(x_shift,),'o')
-    prep.plt.show()
+    dyA=cal_poch(x,fit_A)
+    fit_dy=prep.fit_data(x,dyA,order='linear')
+    FIT.append(fit_dy);
 
-    xf=np.interp(x,XA,XF)
-    for col in hist[7:]:
-	prep.plt.title("raw flux")
-	prep.plot(XF,(col,),'x')
+    if(TRYB):
+	xtoplt=np.ones_like(dyA)*X_MOVE
+	prep.plt.plot(xtoplt,dyA,'-')
+	prep.plot(x,(dyA,),'.-')
 	prep.plt.show()
 
-	fit=prep.fit_data(XF,col,order='linear')
+    for col in hist[7:]:
+	col = col/TIME
+	fit=prep.fit_data(xf,col,order='linear')
 	FIT.append(fit)
 
-    prep.plt.title("fits flux")
-    f=FIT[2]
-    prep.plot(XF,(f(XF),),'x')
-    prep.plt.show()
+    c = np.arange(0.0,1.0,0.01)
+    x_regime=FIT[1](c)
+#    prep.plot(c,(-FIT[2](FIT[0](c)),FIT[4](FIT[0](c))),'o'); prep.plt.show();
+#    prep.plt.plot(-FIT[2](FIT[0](c)),FIT[4](FIT[0](c)),'o'); 
+#    prep.plt.plot(-FIT[2](FIT[0](c)),c,'-'); prep.plt.show();
+#    prep.plt.plot(x,FIT[4](x)/FIT[2](x),'o'); prep.plt.show();
 
     if(TRYB):
-	prep.plt.title("good fits")
-	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
-	prep.plot(nCA,(fit_Ai(nCA),),'-o')
-	prep.plt.show()
-
-#    new_c=prep.myrange()
-#    yA=prep.functionXc(new_c,fit_Ai)
-#    yB=functionXc(new_c,fit_B)
-#    dyA=cal_poch(new_c,fit_A)
-#    print len(aCA),len(x)
-
-    dyA=cal_poch(x,fit_A)
-
-    xtoplt=np.ones_like(dyA)*X_MOVE
-
-    if(TRYB):
-	prep.plt.plot(xtoplt,dyA,'-')
-	prep.plot(XA,(first_dyA,),'.')
-	prep.plot(x,(dyA,),'.-')
+	prep.plt.title("fits")
+	for f in FIT:
+	    prep.plot(x,(f(x),),'o')
 	prep.plt.show()
 
     return 0
@@ -237,11 +225,11 @@ def cal_poch(x,fit,x_m=0.0):
     try:
 	iterator = iter(x)
     except TypeError:
-	derr=derivative(prep.functionCx,x, dx=0.5, args=(fit,x_m), order=5)
+	derr=derivative(prep.functionCx,x, dx=0.5, args=(fit,x_m), order=21)
 	return derr
     else:
 	for i in x:
-	    derr=derivative(prep.functionCx,i, dx=0.5, args=(fit,x_m), order=5)
+	    derr=derivative(prep.functionCx,i, dx=0.5, args=(fit,x_m), order=21)
 	    DERR.append(derr)
 	return np.array(DERR)
 

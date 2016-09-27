@@ -13,8 +13,8 @@ rm *.tmp
 for i in *.avg; do
     echo $i
     nazwa=${i%%.avg}
-#    files=`$SOURCE/call_diff.py $i`
-    $SOURCE/call_diff.py $i
+    files=`$SOURCE/call_diff.py $i`
+#    $SOURCE/call_diff.py $i
     for j in $files; do
 	ext=${j%%.tmp}
 	out=${nazwa}"."${ext}
