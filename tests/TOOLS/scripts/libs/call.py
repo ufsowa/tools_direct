@@ -19,7 +19,7 @@ X_cent=[]
 X0_init=[]
 SAMPLE_BORDER=[]
 NORMA=[]
-TRYB=1;
+TRYB=0;
 	#fit
 FIT_BORDER=[]			#keeps range for A profile y(x) if 0.0 |< x >| 1.0
 FIT=[]		#keeps polynominal representation for A profile
@@ -43,38 +43,41 @@ def x0(hist):
     global FIT_BORDER; global FIT;
     STEP=hist[0][0]
     TIME=hist[0][1]
-    X=hist[:,2]
-    dX=X[1]-X[0]
-    V=hist[:,3]
-    A=hist[:,4]
-    B=hist[:,5]
+    XA=hist[3]
+    XF=hist[2]
+    V=hist[4]
+    A=hist[5]
+    B=hist[6]
     TOT=A+B;
-    ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
-    cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
+#    ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
+#    cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
+#    ca=np.array(ca); cb=np.array(cb);
+    ca=np.divide(A,TOT);    cb=np.divide(B,TOT)
     TOT=A+B+V;cv=V/TOT;c=(A+B)/TOT
-    L=X[0]
-    P=X[-1]
+    L=XA[0]
+    P=XA[-1]
     SAMPLE_BORDER.append(L); SAMPLE_BORDER.append(P);
-    x=np.arange(L,P,dX)
-    CA=np.interp(x,X,ca)
-    CB=np.interp(x,X,cb)
-    X0_init=prep.convolute_x0(x,CA,CB)
+    x=XA
+#    CA=np.interp(x,XA,ca)
+#    CB=np.interp(x,XA,cb)
+    X0_init=prep.convolute_x0(x,ca,cb)
     x=x-X0_init[0]
 #    T=prep.ferc(x)
     if(TRYB):
-	prep.plot(x,(CA,CB))
+	prep.plt.title("raw")
+	prep.plot(x,(ca,cb))
 	prep.plt.show()
 
 
-    nCA,norm_a=prep.norm_data(CA);
-    nCB,norm_b=prep.norm_data(CB);
+    nCA,norm_a=prep.norm_data(ca);
+    nCB,norm_b=prep.norm_data(cb);
     NORMA.append(norm_a); NORMA.append(norm_b);
 
 #    Xa,aCB=prep.move_avg(x,nCB,dX,1.0,2.0);
 #    Xa,aCA=prep.move_avg(x,nCA,dX,1.0,2.0);
-    Xa=x;aCA=nCA;aCB=nCB;
-
+    
     if(TRYB):
+	prep.plt.title("norm")
 	prep.plot(x,(nCA,nCB))
 #	prep.plot(Xa,(aCA,aCB))
 	prep.plt.show()
@@ -87,7 +90,6 @@ def x0(hist):
 
 #    garbage,CB=prep.move_avg(Xa,CB,dX,2.0,3.0);
 #    X,CA=prep.move_avg(Xa,CA,dX,2.0,3.0);
-    X=x
 
 
 #    fit_border_B=prep.set_borders(x,CB);
@@ -103,26 +105,46 @@ def x0(hist):
     first_fit_Ai=prep.fit_data(nCA,x,order='linear')
 
     if(TRYB):
+	prep.plt.title("fit xC")
 	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
 	prep.plot(nCA,(x,),'.')
 	prep.plt.show()
+	prep.plt.title("fit cx")
 	prep.plot(x,(first_fit_A(x),),'-')
 	prep.plot(x,(nCA,),'.')
 	prep.plt.show()
 
     first_dyA=cal_poch(x,first_fit_A)
 
-
     X_MOVE=optimal(first_fit_Ai);
     x=x+X_MOVE
     X_cent=x
 
-#    print X_MOVE
+#   make all fits
     fit_A=prep.fit_data(x,nCA,order='linear')
     fit_Ai=prep.fit_data(nCA,x,order='linear')
     FIT.append(fit_Ai);FIT.append(fit_A);
 
+    x_shift=X_cent - XA
+    prep.plot(XA,(x_shift,),'o')
+    prep.plt.show()
+
+    xf=np.interp(x,XA,XF)
+    for col in hist[7:]:
+	prep.plt.title("raw flux")
+	prep.plot(XF,(col,),'x')
+	prep.plt.show()
+
+	fit=prep.fit_data(XF,col,order='linear')
+	FIT.append(fit)
+
+    prep.plt.title("fits flux")
+    f=FIT[2]
+    prep.plot(XF,(f(XF),),'x')
+    prep.plt.show()
+
     if(TRYB):
+	prep.plt.title("good fits")
 	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
 	prep.plot(nCA,(fit_Ai(nCA),),'-o')
 	prep.plt.show()
@@ -139,7 +161,7 @@ def x0(hist):
 
     if(TRYB):
 	prep.plt.plot(xtoplt,dyA,'-')
-	prep.plot(X,(first_dyA,),'.')
+	prep.plot(XA,(first_dyA,),'.')
 	prep.plot(x,(dyA,),'.-')
 	prep.plt.show()
 

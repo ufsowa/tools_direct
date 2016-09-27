@@ -27,7 +27,7 @@ print "IN gen_bin.py: "
 print PTH_WORK
 print PTH_DEST
 
-data=[];size=0;STEP0=1;TIME0=0;
+data=[];size=0;STEP0=0;TIME0=0.0;
 licz=0;minus=0;dziel=0;
 print files
 
@@ -37,15 +37,16 @@ for file_name in files:
 	if(line != "\n"):
 #	    asplit=[x for x in line.split()]
 	    row_split=[float(x) for x in line.split()]
-	    fsplit=[x for x in row_split]
+#	    fsplit=[x for x in row_split]
+	    X = (row_split[4]+row_split[3])/2.0
 	    STEP=STEP0+row_split[0];TIME=TIME0+row_split[1];
 	    STEP=int(STEP);
 	    if((STEP % every == 0) and (STEP <= stop)):
 		name=PTH_WORK+"/../"+str(long(STEP))+".step"
 		fout=open(name,"a")
-		fout.write("%f %f " % (STEP,TIME))
-		for i in fsplit[2:]:
-		    fout.write("%s " % (i))
+		fout.write("%f %f %f" % (STEP,TIME,X))
+		for i in row_split[4:]:
+		    fout.write(" %f" % (i))
 		fout.write("\n")
 		fout.close()
     if(part>0):

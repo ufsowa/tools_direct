@@ -1,0 +1,17 @@
+
+	FILES='1000.avg 1000.step'
+	FILES1='1000.avg'
+	FILES2='1000.step'
+	print FILES
+#	set terminal wxt size 1800,900; unset key;
+#	set multiplot layout 1,4
+	plot [:] for [ data in FILES ] data u 4:($5/($7 + $5 + $6)) w p t data
+	plot [:] for [ data in FILES ] data u 4:($6/($7 + $6)) w p t data,for [ data in FILES ] data u 4:($7/($7 + $6)) w p t data
+	pause -1
+	plot [:] for [ data in FILES ] data u 3:8 w p, for [ data in FILES ] data u 3:9 w p, for [ data in FILES ] data u 3:10 w p
+	pause -1
+	plot [:] for [ data in FILES ] data u 3:14 w p, for [ data in FILES ] data u 3:15 w p, for [ data in FILES ] data u 3:16 w p
+#	unset multiplot
+	pause -1
+
+    

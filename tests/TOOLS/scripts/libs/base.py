@@ -50,9 +50,11 @@ def str2double(str_obj):
 	if(asplit[0] == bufor):
 	    size+=1;
 	    tmp.append(asplit)
-    tmp=np.array(tmp)
-#    print tmp
-    return tmp,size
+    tmp=np.asarray(tmp)
+    new=tmp.transpose()
+#    print "str2double:", tmp.shape, new.shape
+#    print new
+    return new,size
 
 def plot(x,y,stri='o'):
     iter=0
@@ -127,7 +129,7 @@ def functionXc(c,fit,x0=0.0):
 def func(x, A, B, x0, sigma):
     return A+B*np.tanh((x-x0)/sigma)
 
-def smooth_data(x,y,grid=1000,window=301,order=3,der=0,tryb='noplot'):
+def smooth_data(x,y,grid=1000,window=101,order=3,der=0,tryb='noplot'):
     xx = np.linspace(x.min(),x.max(), grid)
 
     # interpolate + smooth
@@ -293,4 +295,6 @@ def FWHM(X,Y,flag=True):
     return [idx,(right_idx-left_idx)]
 
 
-
+#fit multiple gaussians
+#http://stackoverflow.com/questions/10143905/python-two-curve-gaussian-fitting-with-non-linear-least-squares
+#http://stackoverflow.com/questions/26936094/python-load-data-and-do-multi-gaussian-fit
