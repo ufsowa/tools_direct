@@ -1,0 +1,46 @@
+#!/bin/bash
+
+export LC_NUMERIC=C
+
+
+cd data
+
+iter=0
+run=0
+notrun=0
+total=0
+for j in ./sample* ; do
+    cd $j
+    pause=1
+    next=0
+    name=${j#./}
+    echo $name
+    printf "%s " $iter
+
+    if [ -s started_qsub ] ; then
+        ((run++))
+    elif [ -s jobid ] ; then
+	((notrun++))
+    else
+	dalej=1
+	while [ $dalej ]; do
+	    sbatch run_sim 1>jobid 2>kolejka.log
+#		echo "Maximum number of jobs already in queue" > kolejka.log
+	    dalej=`awk '/Maximum\ number\ of\ jobs\ already\ in\ queue/{print "nie"}' kolejka.log`
+	    echo $dalej" wystartowal" $name
+	    dalej=""
+	    if [ -s kolejka.log ]; then sleep 1800; dalej=1; fi;
+#		echo "ide dalej"
+	done
+	cat jobid >> ../jobs_list
+	((iter++))
+    fi
+
+    ((total++))
+    cd ..
+done
+echo ""
+echo "Running/Qued/Started/Total: "$run $notrun $iter $total 
+
+
+
