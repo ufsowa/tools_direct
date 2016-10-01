@@ -11,7 +11,7 @@ for i in ${NAME}*; do
     echo $i
     name="run$i"
     screen -dmS "$name"
-    screen -S $name -X screen /bin/bash -c "$SRC/run 1 > log.run"
+    screen -S $name -X screen /bin/bash -c "$SRC/run > log.run"
     cd ${DEST}
 done
 

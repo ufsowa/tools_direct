@@ -24,7 +24,7 @@ for j in ./sample* ; do
     else
 	dalej=1
 	while [ $dalej ]; do
-	    sbatch run_sim 1>jobid 2>kolejka.log
+	    echo "run_sim 1>jobid 2>kolejka.log" > run
 #		echo "Maximum number of jobs already in queue" > kolejka.log
 	    dalej=`awk '/Maximum\ number\ of\ jobs\ already\ in\ queue/{print "nie"}' kolejka.log`
 	    echo $dalej" wystartowal" $name
