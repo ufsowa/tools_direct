@@ -1,0 +1,71 @@
+#!/bin/bash
+
+edytuj()
+{
+#    myfile="u"$1"u"$2
+    #utworz katalog symulacji
+#    mkdir $myfile
+    #skopij zawartosc katalogu tamplate do kat. symulacji
+#    cp ../template/* ./$myfile
+    #wejdz do katalogu symulacji
+#    cd $myfile
+    #edytuj plik chem.in
+    sed -e 's/potencjaly/'$chem1' '$chem2'/' chem.in > temp.in
+    cat temp.in > chem.in
+    rm temp.in
+    #edytuj plik conf.in
+    sed -e 's/TEMPERATURA/'$1'/' conf.in > temp.in
+    cat temp.in > conf.in
+    rm temp.in
+    sed -e 's/STECH/'$2'/' conf.in > temp.in
+    cat temp.in > conf.in
+    rm temp.in
+
+    #edytuj plik uruchomieniowy
+    sed 's/^#PBS -N name/#PBS -N s'$2'/' run_sim > tmp
+    cat tmp > run_sim
+    
+    rm tmp
+    #wroc do katalogu uruchomieniowego
+    cd ..
+
+}
+
+
+#skrypt czysci foldery utworzone przez generate
+echo "Tworze strukture katalogow..."
+
+#1.300000 617.264780 0.924051 14984.493707 2323.625960 23.241513 13300.449989 -0.343842 -0.446980 -0.000107
+
+
+LC_NUMERIC=C		#ustawienie kodowania dla powloki bash LC_NUMERIC - zmienna wbudowana powloki
+
+
+start_path=$PWD
+
+Temp=1400.0
+#stech=1.0
+
+while read u1 s1 u2 s2 stech rest; do
+
+    chem1=$u1
+    chem2=$u2
+#    Temp=${Temp%.*}
+    stech=`awk -v st=$stech 'BEGIN{st=st*1000;st=int(st+.5);st=st/1000; printf "%1.3f", st}'`
+    echo $stech
+    sim_dir=$start_path/data/S$stech
+#    script_path=$start_path/scripts
+    template_path=$start_path/template
+
+    mkdir $sim_dir
+    cp $template_path/* $sim_dir
+#    cp $start_path/S$stech/*.xyz $sim_dir/start.in
+
+    cd $sim_dir
+    edytuj $Temp $stech 
+    cd ..
+done < *.input
+
+#uruchom symulacje
+#cd $start_path
+#./run T$Tem

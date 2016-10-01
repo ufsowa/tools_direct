@@ -1,0 +1,20 @@
+#!/bin/bash 
+#PBS -N name
+#PBS -l nodes=1:ppn=1,walltime=12:00:00
+#PBS -q l_long
+#PBS -e error_log
+
+
+echo 'PBS nodes:'
+cat $PBS_NODEFILE > $PBS_O_WORKDIR/started_qsub
+
+cd $PBS_O_WORKDIR
+
+#cp $PBS_O_WORKDIR/* $TMPDIR
+#cd $TMPDIR
+
+#echo $PBS_JOBID > jobid
+./mcdif_* conf.in
+
+#mv $TMPDIR/* $PBS_O_WORKDIR
+

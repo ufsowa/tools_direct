@@ -1,0 +1,22 @@
+Method:/name//nuber_of_parameters/parameters(main_step/sub_step/break)/ 1
+SGCMC 3 5000 200000 TEMPERATURA
+Save: 3
+SRO 0 
+NandE 1 0
+make_pic 7 5000 0 0 0 80 80 80
+Options:
+EQUILIBRATE_VAC 0 2 8 2 3 0
+RESERVUARS 0
+Memory_Size:
+40 40 40
+Interaction_radious:/rmin_rmax_cell_wektor||sprawdza_czy_sfera_wystaje/
+1.6 1.8 1.5 1.5 1.5
+Region_area:/</
+0 0 0 80 80 80
+Simulation_area:/</
+0 0 0 80 80 80
+Boundary_conditions:?energy_atoms?/<0/=0/0<vec_transition
+80 80 80 80 80 80
+Build_starting_structure:ile?yes?no/st_end_from/
+1 0
+left.in 10 0 0 50 40 40 0 0 0 0

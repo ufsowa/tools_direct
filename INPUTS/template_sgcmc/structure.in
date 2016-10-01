@@ -1,0 +1,9 @@
+structures:
+1
+fill_vect/</st-end-trans
+0 0 0 80 80 80 2 2 2
+atoms:
+2
+atom_position:/x,y,z,typ,name,sublatice/
+0 0 0 1 Ni 0
+1 1 1 2 Al 1
