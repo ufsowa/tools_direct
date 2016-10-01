@@ -1,0 +1,23 @@
+#!/bin/bash -l
+
+#SBATCH -J name
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH -A mcdyfuzja
+#SBATCH -p plgrid
+#SBATCH --time=72:00:00
+#SBATCH --error="error.err"
+#SBATCH --output="output.out"
+
+
+cd $SLURM_SUBMIT_DIR
+
+echo "SLURM_JOB_NODELIST=$SLURM_JOB_NODELIST" > started_qsub
+echo "SLURM_NNODES=$SLURM_NNODES" >> started_qsub
+#echo "SLURMTMPDIR=$SLURMTMPDIR" >> started_qsub
+echo $SLURM_JOBID > jobid
+
+#srun /bin/hostname
+time env OMP_NUM_THREADS=1 OMP_SCHEDULE="static" ./mcdif_* conf.in
+
+

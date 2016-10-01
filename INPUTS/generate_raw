@@ -1,0 +1,46 @@
+#!/bin/bash 
+
+pth="$PWD"		#/template/"
+FILE="conf.in"
+simdir="$pth/data"
+tplt="$pth/template"
+
+T=1000.0
+N=` echo "40.0 * 30.0 * 30.0 * 2.0" | bc`
+Cv=0.0095
+x=0.5
+num=`awk -v ST=$1 -v ED=$2 -v EY=$3 'BEGIN{for(i=ST;i<=ED;i+=EY)print i}'`
+
+echo $N $Cv $num
+echo "STECH M V Ag Aa Aa-Ag |Aa-Ag|"
+
+mkdir $simdir
+for VAR in $num; do
+    x=$VAR
+#    Cv=`awk -v vac=4 -v n=$N 'BEGIN{cv=vac*2*25*25/n; print cv;}'`
+    V=`awk -v cv=$Cv -v n=$N 'BEGIN{v=cv*n/2;printf "%d",v}'`
+    M=`echo "(1.0-$Cv)*$N" | bc`
+    Ac=`echo "$N*0.5-$V" | bc`
+    A=`echo "$x*$M" | bc`
+#    d=`echo "$Ac-$A" | bc`;
+    d=`awk -v a=$Ac -v b=$A 'BEGIN{inp=a-b; printf "%d", inp}'`;
+    dp=`echo $d | tr -d -`
+    mkdir  $simdir/stech_$VAR
+    cp $tplt/* $simdir/stech_$VAR
+    cd $simdir/stech_$VAR
+
+    sed -i 's/TEMPERATURA/'$T'/' $FILE
+    sed -i 's/VAC/'$V'/' $FILE
+    if [ "$d" -gt 0 ]; then
+	sed -i 's/ATOMS/'$d' 1 2/' $FILE
+    elif [ "$d" -lt 0 ]; then
+	sed -i 's/ATOMS/'$dp' 2 1/' $FILE
+    elif [ "$d" -eq 0 ]; then
+	sed -i 's/ATOMS/'$dp' 1 1/' $FILE
+    fi
+    echo $VAR $x $M $Cv $V $A $Ac $d $dp
+    cd $pth
+done
+#' > tmp; rm tmp
+
+

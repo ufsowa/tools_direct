@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+cd data
+
+for kat in ./S*; do
+    cd $kat
+    echo $kat
+    ls *stech.xyz | awk 'END{print NR}'
+    cd ..
+done
+
+cd ..

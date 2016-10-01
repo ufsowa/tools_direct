@@ -1,0 +1,23 @@
+Method: 5
+INSERT 3 VAC 1 0
+INSERT 3 VAC 2 0
+INSERT 3 ATOMS
+DIRECT 3 50 1000000 TEMPERATURA
+DIRECT 3 10000 20000 TEMPERATURA
+Save: 2
+NandE 1 0
+make_pic 7 500 0 0 0 80 60 60
+Options: 0
+Memory_Size:
+40 30 30
+Interaction_radious:
+1.6 1.8 1.5 1.5 1.5
+Region_area:/</
+0 0 0 80 60 60
+Simulation_area:/</
+0 0 0 80 60 60
+Boundary_conditions:?energy_atoms?/<0/=0/0<vec_transition
+80 60 60 80 60 60
+Build_starting_structure:ile?yes?no/st_end_from/
+1 0
+left.in 10 0 0 50 40 40 0 0 0 0
