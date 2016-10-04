@@ -7,73 +7,65 @@ N=$2
 export LC_NUMERIC=C
 SOURCE="${BASH_SOURCE[0]}"
 PTH=$( dirname "$SOURCE" )
+
+INPUTS=`sed -n '1p' $PTH/PTH_SRC`
 stpth=$PWD
 TEMP=$PWD/template
 templ=$PWD/template/*
 
+couple=${stpth##*/}
+INPUTS=$INPUTS/$couple
 #check if template prepared
 EMPTY="0"
  [ "$(ls -A $TEMP)" ] && EMPTY="1" || EMPTY="0";
-echo $EMPTY
 if [ $EMPTY == "0" ]; then echo "You need to prepare template first..." ;exit; fi
 
-#main body
-echo "Gen dir tree..."
 
-cd ./inputs/left
-iterL=0
-for j in ./*.xyz ; do
-    if [ $iterL -lt $N ] ; then
-	mkdir $stpth/data/sample${iterL}
-	cp $j $stpth/data/sample${iterL}/left.in
-	cp ${templ} $stpth/data/sample${iterL}/
-	sed -i 's/SAMPLE/s'$iterL'/' $stpth/data/sample${iterL}/run_sim
-    fi
-    ((iterL++))
-done	#skonczylem wszystkie stech.xyz
+main() {
+    echo "Gen dir tree..."
+    gen 'left' iterL
+    gen 'right' iterR
+
+    cd $stpth/data
+    echo "iter L|P: "$iterL"|"$iterR
+    nr_dir=`ls -l | grep -v ^l | wc -l`
+    echo "nr dir/ nr stech: ("$nr_dir"-1)="$N
+    cd $stpth
+}
+
+gen() {
+    local __resultsvar=$2
+    local iter=0
+    local nr_stech=`ls $INPUTS/$1/*.xyz | wc -l`
+    local repeat=0
+    for j in $INPUTS/$1/*.xyz ; do
+        if [ $iter -lt $N ] ; then
+	    local dirn="$stpth/data/sample${iter}"
+	    [ -d $dirn ] || mkdir $dirn
+	    cp $j $stpth/data/sample${iter}/$1.in
+	    cp ${templ} $stpth/data/sample${iter}/
+	    sed -i 's/SAMPLE/s'$iter'/' $stpth/data/sample${iter}/run_sim
+	    ((iter++))
+	fi
+    done	#skonczylem wszystkie stech.xyz
     #musze dorobic do N?
-if [ $iterL -lt $N ]; then
-    nr_stech=$iterL
-    repeat=`awk -v n=$N -v d=$iterL 'BEGIN{printf "%1.0d", n/d }'`
-    
-    for (( k=0; k<$repeat; k++ )); do
-	for j in ./*.xyz ; do
-	    if [ $iterL -lt $N ] ; then
-		mkdir $stpth/data/sample${iterL}
-		cp $j $stpth/data/sample${iterL}/left.in
-		cp ${templ} $stpth/data/sample${iterL}/
-		sed -i 's/SAMPLE/s'$iterL'/' $stpth/data/sample${iterL}/run_sim
-	    fi
-	    ((iterL++))
-	done	#skonczylem wszystkie stech.xyz
-    done
-fi
-
-cd $stpth/inputs/right
-iterR=0
-for j in ./*.xyz ; do
-    if [ $iterR -lt $N ] ; then
-	cp $j $stpth/data/sample${iterR}/right.in
+    if [ $iter -lt $N ]; then
+	repeat=`awk -v n=$N -v d=$iter 'BEGIN{printf "%1.0d", n/d }'`
+	for (( k=0; k<$repeat; k++ )); do
+	    for j in $INPUTS/$1/*.xyz ; do
+		if [ $iter -lt $N ] ; then
+		    dirn="$stpth/data/sample${iter}"
+		    [ -d $dirn ] || mkdir $dirn
+		    cp $j $stpth/data/sample${iter}/$1.in
+		    cp ${templ} $stpth/data/sample${iter}/
+		    sed -i 's/SAMPLE/s'$iter'/' $stpth/data/sample${iter}/run_sim
+		    ((iter++))
+		fi
+	    done	#skonczylem wszystkie stech.xyz
+	done
     fi
-    ((iterR++))
-done	#skonczylem wszystkie stech.xyz
-    #musze dorobic do N?
-if [ $iterR -lt $N ]; then
-    nr_stech=$iterR
-    repeat=`awk -v n=$N -v d=$iterR 'BEGIN{printf "%1.0d", n/d }'`
-    for (( k=0; k<$repeat; k++ )); do
-	for j in ./*.xyz ; do
-	    if [ $iterR -lt $N ] ; then
-		cp $j $stpth/data/sample${iterR}/right.in
-	    fi
-	    ((iterR++))
-	done	#skonczylem wszystkie stech.xyz
-    done
-fi
+    local results="i:$iter r:$repeat t:$nr_stech"
+    eval $__resultsvar="'$results'"
+}
 
-cd $stpth/data
-echo "iter/ repeat: ("$repeat"+1)*"$nr_stech"="$iterL"/"$iterR
-nr_dir=`ls -l | grep -v ^l | wc -l`
-echo "nr dir/ nr stech: ("$nr_dir"-1)="$N
-cd $stpth
-
+main

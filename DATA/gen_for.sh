@@ -9,6 +9,6 @@ cd ${DEST}
 for i in ${NAME}*; do
     cd $i
     echo $i
-    $SRC/generate 1 2
+    $SRC/generate 1 5
     cd ${DEST}
 done
