@@ -1,29 +1,28 @@
 Method: 1
-RESIDENT 4 5000 500 5000 1000
+RESIDENT 4 5000 2000 5000 1000.0
 Save: 4
-HIST 4 0 140 1 1
+HIST 4 0 200 1 1
 NandE 1 1
 Rd2 0
-pic_diff 7 500 0 0 0 140 40 40
+pic_diff 7 500 0 0 0 200 60 60
 Options: 4
-EQUILIBRATE 6 2 20 20 120 1 1
+EQUILIBRATE 6 2 50 20 180 1 1
 RESERVUAR 5 10 10 1 1 4000
-RESERVUAR 5 120 10 1 1 2000
+RESERVUAR 5 180 10 1 1 2000
 L_SIM_B 2 1 0
 Memory_Size:
-70 20 20
+100 30 30
 Def_atomic_zone:
 1.6 2.1 1.5 1.5 1.5
 Region_area:/</
-0 0 0 170 40 40
+0 0 0 200 60 60
 Simulation_area:/</
-20 0 0 120 40 40
+20 0 0 180 60 60
 Boundary_conditions:?energy_atoms?/<0/=0/0<vec_transition
-0 40 40 0 40 40
+0 60 60 0 60 60
 Build_starting_structure:ile?yes?no/st_end_from/
 2 1
-left.in 20 0 0 70 40 40 0 0 0 0
-right.in 70 0 0 120 40 40 0 0 0 0
-start.in 0 0 0 100 40 40 0 0 0 0
+left.in 20 0 0 100 60 60 0 0 0 0
+right.in 100 0 0 180 60 60 0 0 0 0
 
 
