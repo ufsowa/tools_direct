@@ -10,8 +10,9 @@ for i in ${NAME}*; do
     cd $i
     echo $i
     name="run$i"
-    screen -dmS "$name"
-    screen -S $name -X screen /bin/bash -c "$SRC/run > log.run"
+#    screen -dmS "$name"
+#    screen -S $name -X screen /bin/bash -c "$SRC/run > log.run"
+    $SRC/run > log.run
     cd ${DEST}
 done
 

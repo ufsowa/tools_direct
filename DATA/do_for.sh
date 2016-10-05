@@ -2,6 +2,7 @@
 
 # input variables
 MANY="5"
+NID="nst"
 f_step="$PWD/step.input"
 NAME="couple_"
 
@@ -29,7 +30,7 @@ cd ${DEST}
 for i in ${NAME}*; do
     cp -R -u ${TEMPLATE}/* $i
     cd $i/template
-    sed -i 's/NAZWA/c_SAMPLE/' run_sim
+    sed -i 's/NAZWA/'${NID}'_SAMPLE/' run_sim
     outputs=$outputs" | Pepared: $i $stech $STEP"
     cd ${DEST}
 done
