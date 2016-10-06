@@ -6,7 +6,7 @@ ST=$PWD
 ./s_prep
 
 #echo "binning..."
-./s_run 0 "hist" "1" "1000"
+./s_run 0 "hist" "500" "2000"
 
 #echo "averaging..."
 ./s_run 1

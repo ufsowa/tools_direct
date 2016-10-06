@@ -1,0 +1,5 @@
+*.avg
+*.step
+*.coef
+*.vel
+devel/diffu
