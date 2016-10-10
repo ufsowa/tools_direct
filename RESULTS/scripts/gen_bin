@@ -12,6 +12,7 @@ DEST=$RES/$name
 echo $IN_DAT" -> "$DEST
 							#grep -q "$DEST" "$FILE" || echo "$LINE" >> "$FILE"
 mkdir -p $DEST
+cd data
 for data in sample*; do
     echo $data
     cd $data

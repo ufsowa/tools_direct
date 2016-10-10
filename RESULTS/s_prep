@@ -15,7 +15,7 @@ F_RES=$ST/PTH_RES
 F_DEST=$SCRIPTS/PTH_DEST
 #clear
 rm -f $F_DATA
-rm -f $F_RES
+rm -f $F_RES; touch $F_RES
 
 #main
     #set destination for results
@@ -33,5 +33,5 @@ while read -r line; do
     name=${line%_s*}
     name=${name##*/}
     name=$RES/$name
-    echo $name >> $F_RES
+    grep -q "$name" "$F_RES" || echo "$name" >> "$F_RES"
 done < $F_DATA
