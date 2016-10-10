@@ -33,7 +33,9 @@ function plot_Ns {
 	
 	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
 	plot [90:115] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette t '$1',\
-		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l palette t '$2'
+		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l palette t '$2',\
+		'$1' u (\$4):(\$7/(\$6+\$7)):2 w p pt 6 ps 1 palette t '$1',\
+		'$2' u (\$4):(\$7/(\$6+\$7)):2 w l palette t '$2'
 
 
 #	     for [ data in FILES ] data u (4:(\$7/(\$6+\$7)):2 w p pt 4 ps 2 palette t data
@@ -49,8 +51,8 @@ function plot_N {
     echo "
 	FILES='$@'
 	print FILES
-	plot [-0.2:0.2] for [ data in FILES ] data u ((\$3-49.5)/(2.0*sqrt(\$2))):(\$5/(\$5+\$6)) w p t data,\
-	     for [ data in FILES ] data u ((\$3-49.5)/(2.0*sqrt(\$2))):(\$6/(\$5+\$6)) w p t data
+	plot [:] for [ data in FILES ] data u (\$4):(\$6/(\$7+\$6)) w l t data,\
+	     for [ data in FILES ] data u (\$4):(\$7/(\$7+\$6)) w l t data
     pause -1
     " > to_plot
     gnuplot to_plot
