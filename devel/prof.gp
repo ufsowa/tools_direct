@@ -30,8 +30,13 @@ function plot_Ns {
     echo "
 	FILES='$@'
 	print FILES
-	plot [-0.2:0.2] for [ data in FILES ] data u ((\$4-49.)/(2.0*sqrt(\$2))):(\$7/(\$7+\$8)) w p t data,\
-	     for [ data in FILES ] data u ((\$4-49.)/(2.0*sqrt(\$2))):(\$8/(\$7+\$8)) w p t data
+	
+	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
+	plot [90:115] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette t '$1',\
+		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l palette t '$2'
+
+
+#	     for [ data in FILES ] data u (4:(\$7/(\$6+\$7)):2 w p pt 4 ps 2 palette t data
     pause -1
     " > to_plot
     gnuplot to_plot
@@ -73,12 +78,13 @@ function plot_cv {
     " > $MY_PTH/$new_name.jpeg
 }
 
-files=`ls *.avg`
-echo $files
+#files=`ls *.avg`
+#plot_N $files
+files=`ls *.step`
+#plot_Ns $files
 
-plot_N $files
-
-#for i in $files;
-#do
-    #plot_N $i
-#done
+for i in $files;
+do
+    smooth=${i%%.*}.avg
+    plot_Ns $i $smooth
+done

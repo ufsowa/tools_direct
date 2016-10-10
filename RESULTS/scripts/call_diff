@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+echo "call_diff..."
+FILE="${BASH_SOURCE[0]}"
+SOURCE="$(dirname "$FILE")"
+MY_PTH=$PWD
+
+rm *.coef
+rm *.vel
+rm *.tmp
+
+for i in *.avg; do
+    echo $i
+    nazwa=${i%%.avg}
+#    files=`$SOURCE/call_diff.py $i`
+    $SOURCE/call_diff.py $i
+    for j in *.tmp; do
+	ext=${j%%.tmp}
+	out=${nazwa}"."${ext}
+	mv $j $MY_PTH/$out
+    done
+done
+
+cd $MY_PTH

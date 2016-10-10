@@ -54,16 +54,16 @@ for col in data[nr_col:]:
 	tryb='plot'
     new_x=[];new_xf=[];new_y=[];
     if(nr_col >= 4 and nr_col <= 6):
-	new_x,new_y=tools.move_avg(x,y,0.05,20.0,tryb)		#concnetrations
+	new_x,new_y=tools.move_avg(x,y,0.05,10.0,tryb)		#concnetrations
     elif(nr_col >= 7 and nr_col <= 18):
 #	tmp_xf,tmp_y=tools.smooth_data(xf,y,2000,11,2,0,"plot")
 #	new_xf=np.interp(new_x,x,xf)
 #	new_y=np.interp(new_xf,tmp_xf,tmp_y)
-	new_xf,new_y=tools.move_avg(xf,y,0.05,20.0,tryb)		#fluxes		-> need other parameters becouse of gauss shape
+	new_xf,new_y=tools.move_avg(xf,y,0.05,10.0,tryb)		#fluxes		-> need other parameters becouse of gauss shape
 	if len(DATA[2])==0:
 	    DATA[2]=new_xf;
     elif(nr_col >= 19 and nr_col <= 20):
-	new_x,new_y=tools.move_avg(x,y,0.05,20.0,tryb)		#events
+	new_x,new_y=tools.move_avg(x,y,0.05,10.0,tryb)		#events
     else:
 	continue;
 #    new_x,new_y=tools.fit_data(x,y,1000,301,3)

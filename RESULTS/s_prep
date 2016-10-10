@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+f_step="$ST/step.input"
+NAME="couple_*"
+
+# paths
+cd ${ST}"/../DATA/data"; SOURCE=$PWD; cd $ST
+RES=$ST/results
+SCRIPTS=$ST/scripts
+STEP="NULL"
+
+F_DATA=$ST/PTH_DATA
+F_RES=$ST/PTH_RES
+F_DEST=$SCRIPTS/PTH_DEST
+#clear
+rm -f $F_DATA
+rm -f $F_RES
+
+#main
+    #set destination for results
+echo "$RES" > $F_DEST
+    #prep data to bin
+cd $SOURCE
+for i in $NAME; do
+    STEP=`awk -v stech=$i 'BEGIN{out=-1}{if($1==stech){out=1}}END{if(out>=0){print out}else{print "NULL"}}' $f_step`
+    if [ $STEP != "NULL" ];then
+    echo "$SOURCE/$i" >> $F_DATA
+    fi
+done; cd $ST;
+    #prep results to avg and diff
+while read -r line; do
+    name=${line%_s*}
+    name=${name##*/}
+    name=$RES/$name
+    echo $name >> $F_RES
+done < $F_DATA

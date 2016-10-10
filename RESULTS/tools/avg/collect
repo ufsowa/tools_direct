@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+
+
+
+
+ST=$PWD
+rm *.all
+rm *.avg
+
+cd ..
+BEG=$PWD
+
+for files in *.coef; do
+    cat $files >> $ST/coef.all
+done

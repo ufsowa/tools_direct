@@ -1,6 +1,11 @@
 
-	FILES='1000.avg 1500.avg 2000.avg 500.avg'
+	FILES='500.step 500.avg'
 	print FILES
-	plot [-0.2:0.2] for [ data in FILES ] data u (($3-49.5)/(2.0*sqrt($2))):($5/($5+$6)) w p t data,	     for [ data in FILES ] data u (($3-49.5)/(2.0*sqrt($2))):($6/($5+$6)) w p t data
+	
+	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
+	plot [90:115] '500.step' u ($4):($6/($6+$7)):2 w p pt 6 ps 1 palette t '500.step',		'500.avg' u ($4):($6/($6+$7)):2 w l palette t '500.avg'
+
+
+#	     for [ data in FILES ] data u (4:($7/($6+$7)):2 w p pt 4 ps 2 palette t data
     pause -1
     

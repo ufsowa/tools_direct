@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+echo "gen bins $1 $2 $3..."
+FILE="${BASH_SOURCE[0]}"
+SOURCE="$(dirname "$FILE")"
+RES=`cat $SOURCE/PTH_DEST`
+IN_DAT=$PWD
+name=${IN_DAT##*/}
+name=${name%_s*}
+DEST=$RES/$name
+#echo $FILE $SOURCE $RES 
+echo $IN_DAT" -> "$DEST
+							#grep -q "$DEST" "$FILE" || echo "$LINE" >> "$FILE"
+mkdir -p $DEST
+for data in sample*; do
+    echo $data
+    cd $data
+#    cp -u -p $ST/gen_bin.py .
+    $SOURCE/gen_bin.py $1 $2 $3 $DEST
+    cd ..
+done

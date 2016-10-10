@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+SRC_PTH="$ST/scripts"
+WORK_PTH=$SRC_PTH/PTH_RES
+
+to_do(){
+#    echo "arg: " $1
+    if [ $1 -eq 0 ]; then
+	while read -r line; do
+	    cd $line
+	    $SRC_PTH/gen_bin $2 $3 $4
+	    cd $ST
+	done < PTH_DATA
+    elif [ $1 -eq 1 ]; then
+	while read -r line; do
+	    cd $line
+	    $SRC_PTH/average
+	    cd $ST
+	done < PTH_RES
+    elif [ $1 -eq 2 ]; then
+	while read -r line; do
+	    cd $line
+	    $SRC_PTH/call_diff
+	    cd $ST
+	done < PTH_RES
+    fi
+
+}
+
+#cd ..
+
+to_do $1 $2 $3 $4
+
+#cd $ST
