@@ -23,7 +23,7 @@ ST=$PWD
 ./s_run 0 "hist" "5" "5000"
 
 #echo "averaging..."
-./s_run 1
+./s_run 1 0.25 0.5 10.0
 
 #echo "diffusiong..."
 ./s_run 2

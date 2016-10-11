@@ -5,10 +5,13 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-import lib_diff as tools
+import libs.base as tools
 
 
 name=sys.argv[1]
+grid=float(sys.argv[2])
+step=float(sys.argv[3])
+points=float(sys.argv[4])
 name_out=name.replace('all','avg')
 fout=open(name_out,'a')
 
@@ -26,8 +29,14 @@ for col in data[4:]:
     if(nr_col==4 or nr_col==6 or nr_col==7):
 	y=y/time
 
-    tmp_x,tmp_y=tools.move_avg(x,y,0.1,0.01,10.0)
-    new_x=tmp_x;new_y=tmp_y;
+    ID=np.isfinite(y)
+    myy=y[ID]
+    myx=x[ID]
+    
+    new_x,new_y=tools.move_avg(myx,myy,grid,step,points,"plot")		#concnetrations
+
+#    tmp_x,tmp_y=tools.move_avg(myx,myy,0.1,0.01,3.0)
+#    new_x=tmp_x;new_y=tmp_y;
 #    new_x,new_y=tools.fit_data(x,y,1000,301,3)
 #    new_x,new_y=tools.move_avg(new_x,new_y,1.0,0.5,2.0)
 #    new_x,new_y=tools.smooth_data(tmp_x,tmp_y,1000,301,3,0)

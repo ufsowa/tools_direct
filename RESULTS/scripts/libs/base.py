@@ -163,9 +163,9 @@ def gaussian(i,j,dx):
     A=1.0/(dx*np.sqrt(2.0*np.pi))
     return A*np.exp(-(r*r/(2.0*dx*dx)))
 
-def move_avg(x,y,step=1.0,ile=3,tryb='noplot'):
-    grid=x[1]-x[0]
-    size=grid*ile
+def move_avg(x,y,grid,step=1.0,ile=3,tryb='noplot'):
+    step=x[1]-x[0]
+    size=step*ile
     dense_x = np.arange(min(x),max(x)+step,step)
     new_x=[]; new_y=[]; w =[];
     for i in dense_x:
@@ -217,7 +217,7 @@ def move_avg(x,y,step=1.0,ile=3,tryb='noplot'):
 #	plt.show()
 
 	if(len(tmp_y)>0):
-	    w = [gaussian(i,j,grid/2.0) for j in tmp_x]
+	    w = [gaussian(i,j,grid) for j in tmp_x]
 	    N =np.average(tmp_y,weights=w)
 	    new_x.append(i)
 	    new_y.append(N)

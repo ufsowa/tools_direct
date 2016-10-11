@@ -10,5 +10,5 @@ SOURCE="$(dirname "$FILE")"
 rm *.avg
 for data in *.step; do
     echo $data
-    $SOURCE/average.py $data
+    $SOURCE/average.py $data $1 $2 $3
 done
