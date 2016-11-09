@@ -3,10 +3,10 @@
 
 plot(){
     echo -e "
-	B=95
-	E=105
+	B=40
+	E=70
 	S=0
-	I=200
+	I=50
 	file='$1'
 	equi='$2'
 	set hidden3d
@@ -47,9 +47,9 @@ plot(){
 #		file every :I:B:S:E u 2:4:((\$11 - \$14)/1) w l
 
 #sinks lattice
-#	splot file every :I:B:S:E u 2:4:((\$15 - \$18*1)/1) w l,\
-#		file every :I:B:S:E u 2:4:((\$16 - \$19*1)/1) w l,\
-#		file every :I:B:S:E u 2:4:((\$17 - \$20*1)/1) w l
+	splot file every :I:B:S:E u 2:4:((\$15 - \$18*1)/1) w l,\
+		file every :I:B:S:E u 2:4:((\$16 - \$19*1)/1) w l,\
+		file every :I:B:S:E u 2:4:((\$17 - \$20*1)/1) w l
 
 #sinks lattice equi
 #		splot equi every :100::100 u 2:4:((\$12)/1) w p,\
@@ -66,14 +66,14 @@ plot(){
 
 
 #profiles
-        splot file every :I:B:S:E u 2:4:(\$6/(\$6+\$7+\$8)) w l,\
-		file every :I:B:S:E u 2:4:(\$7/(\$6+\$7+\$8)) w l
+#        splot file every :I:B:S:E u 2:4:(\$6/(\$6+\$7+\$8)) w l,\
+#		file every :I:B:S:E u 2:4:(\$7/(\$6+\$7+\$8)) w l
 #		file every :I:B:S:E u 2:4:(\$8/(\$6+\$7+\$8)) w l
 
 #lattice + sample
-#        splot file every :100::100 u 2:4:((\$15 + \$9)/1) w l,\
-#		file every :100::100 u 2:4:((\$16 + \$10)/1) w l,\
-#		file every :100::100 u 2:4:((\$17 + \$11)/1) w l
+        splot file every :100::100 u 2:4:((\$15 + \$9)/1) w l,\
+		file every :100::100 u 2:4:((\$16 + \$10)/1) w l,\
+		file every :100::100 u 2:4:((\$17 + \$11)/1) w l
 
 #lattice
 #        splot file every :I:B:S:E u 2:4:((\$15*0 + \$18*1)/1) w l,\

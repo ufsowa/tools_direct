@@ -32,10 +32,10 @@ function plot_Ns {
 	print FILES
 	
 	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
-	plot [90:115] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette t '$1',\
-		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l palette t '$2',\
-		'$1' u (\$4):(\$7/(\$6+\$7)):2 w p pt 6 ps 1 palette t '$1',\
-		'$2' u (\$4):(\$7/(\$6+\$7)):2 w l palette t '$2'
+	plot [45:60] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette notitle,\
+		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l lc -1 t 'A',\
+		'$1' u (\$4):(\$7/(\$6+\$7)):2 w p pt 6 ps 1 palette notitle,\
+		'$2' u (\$4):(\$7/(\$6+\$7)):2 w l lc 1 t 'B'
 
 
 #	     for [ data in FILES ] data u (4:(\$7/(\$6+\$7)):2 w p pt 4 ps 2 palette t data

@@ -55,12 +55,12 @@ function plot_Fd {
 	print FILES
 	
 #	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
-	plot [90:115] '$1' u 4:14 w p pt 6 t '$1',\
-		'$2' u 4:14 w l t '$2',\
-		'$1' u 4:15 w p pt 6 ps 1 t '$1',\
-		'$2' u 4:15 w l t '$2',\
-		'$1' u 4:16 w p pt 6 ps 1 t '$1',\
-		'$2' u 4:16 w l t '$2'
+	plot [40:70] '$1' u 4:14 w p pt 6 notitle,\
+		'$2' u 4:14 w l lc -1 t 'V',\
+		'$1' u 4:15 w p pt 6 ps 1 notitle,\
+		'$2' u 4:15 w l lc 1 t 'A',\
+		'$1' u 4:16 w p pt 6 ps 1 notitle,\
+		'$2' u 4:16 w l lc 2 t 'B2'
 
 
 #	     for [ data in FILES ] data u (4:(\$7/(\$6+\$7)):2 w p pt 4 ps 2 palette t data
