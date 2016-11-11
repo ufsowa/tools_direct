@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+ST=$PWD
+
+SCRIPTS=${ST%%/results*}/scripts
+
+echo $ST $SCRIPTS
+rm *.avg
+for data in *.all; do
+    echo $data
+    $SCRIPTS/ave_diff.py $data 0.01 0.05 20.0
+done

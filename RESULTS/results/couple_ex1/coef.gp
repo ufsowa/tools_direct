@@ -19,7 +19,7 @@ function plot_d {
 
 	FILES='$@'
 	print FILES
-	plot [0:][:] for [ data in FILES ] data u (\$4):(\$7/\$2) w lp t data,\
+	plot [0:][0:] for [ data in FILES ] data u (\$4):(\$7/\$2) w lp t data,\
 		'D_maning' u 1:(\$3*0.05) w p pt 6,\
 		'D_maa.dat' u (\$1-0.05):(\$4*0.027) w p pt 6
 
@@ -68,7 +68,7 @@ function plot_v {
 	Y0='$y0'
 	FILES='$@'
 	print FILES, Y0
-	plot for [ data in FILES] data u (sqrt(\$2)):((\$3)) w p ps 2 pt 6 lc 1
+	plot for [ data in FILES] data u ((\$2)):((\$3)) w p ps 2 pt 6 lc 1
 	pause -1
     " > to_plot
     gnuplot to_plot

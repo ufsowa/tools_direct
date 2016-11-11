@@ -11,7 +11,7 @@ module load python-scipy
 
 
 echo "start: "`date`
-cd $SLURM_SUBMIT_DIR
+#cd $SLURM_SUBMIT_DIR
 
 
 ST=$PWD
@@ -20,10 +20,10 @@ ST=$PWD
 ./s_prep
 
 #echo "binning..."
-./s_run 0 "hist" "5" "5000"
+./s_run 0 "hist" "10" "5000"
 
 #echo "averaging..."
-./s_run 1 0.25 0.5 10.0
+./s_run 1 2.0 0.05 2.0
 
 #echo "diffusiong..."
 ./s_run 2

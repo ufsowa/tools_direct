@@ -1,0 +1,7 @@
+
+	FILES='0.step 100.step 10.step 110.step 120.step 130.step 140.step 150.step 160.step 170.step 180.step 190.step 200.step 20.step 210.step 220.step 230.step 240.step 250.step 260.step 270.step 280.step 290.step 300.step 30.step 310.step 320.step 330.step 340.step 350.step 360.step 370.step 380.step 390.step 400.step 40.step 410.step 420.step 50.step 60.step 70.step 80.step 90.step'
+	print FILES
+	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
+	plot [:] for [ data in FILES ] data u ($4):($6/($7+$6)):2 w l palette notitle,	     for [ data in FILES ] data u ($4):($7/($7+$6)):2 w l palette notitle
+    pause -1
+    
