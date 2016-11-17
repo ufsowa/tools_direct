@@ -13,7 +13,7 @@ for i in *.avg; do
     echo $i
     nazwa=${i%%.avg}
 #    files=`$SOURCE/call_diff.py $i`
-    $SOURCE/call_diff.py $i
+    $SOURCE/call_diff.py $i $1 $2
     for j in *.tmp; do
 	ext=${j%%.tmp}
 	out=${nazwa}"."${ext}

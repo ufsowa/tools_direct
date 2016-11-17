@@ -6,6 +6,10 @@ from scipy.integrate import quad
 from scipy.misc import derivative
 
 ############## Global basic variables ############
+	#options
+TYPES=2
+CUMULATE=1
+
 	#files
 out_name1="coef.tmp"
 OUT_DIF=open(out_name1,"a")
@@ -25,6 +29,10 @@ FIT_BORDER=[]			#keeps range for A profile y(x) if 0.0 |< x >| 1.0
 FIT=[]		#keeps polynominal representation for A profile
 X_MOVE=0.0
 ##################################################
+
+def set(par):
+    global TYPES;TYPES=par[0];
+    global CUMULATE;CUMULATE=par[1]
 
 def reset_global_var():
     global STEP; STEP=0
@@ -47,22 +55,51 @@ def x0(hist):
     XA=hist[3]
     XF=hist[2]
     V=hist[4]
-    A=hist[5]
-    B=hist[6]
-    TOT=A+B;
-    ca=prep.divide(A,TOT);    cb=prep.divide(B,TOT)
-    TOT=A+B+V;
-    cv=prep.divide(V,TOT);c=prep.divide((A+B),TOT)
 
-    #sinks
-    #flux intrinsic
-    #flux total
+    ATOMS=[]; ALL=[]; TOT=[]; STECH=[];
+    for i in np.arange(5,(5+TYPES),1):
+	ATOMS.append(hist[i])
+
+    ATOMS=np.array(ATOMS)
+
+    for i in ATOMS:
+	if(len(TOT)==0):
+	    TOT=i
+	else:
+	    TOT=TOT+i;
+    TOT=np.array(TOT)
+    iterr=0;buf=[];
+    for i in ATOMS:
+	if(iterr>=CUMULATE):
+	    buf=[];
+	iterr+=1;
+	if(len(buf)==0):
+	    buf=i
+	else:
+	    buf+=i
+	
+	if(iterr>=CUMULATE):
+	    c=buf/TOT;
+	    STECH.append(c)
+#	print iterr,len(buf), len(STECH)
+
+    ALL=TOT+V;cv=V/ALL;c=TOT/ALL;
+    STECH=np.array(STECH)
+
+    x=XA
+    ca=STECH[0]
+    cb=STECH[1]
+
+    if(TRYB):
+	prep.plt.title("raw")
+	prep.plot(x,(ca,cb))
+	prep.plt.show()
+
 
     #define frame
     L=XA[0]
     P=XA[-1]
     SAMPLE_BORDER.append(L); SAMPLE_BORDER.append(P);
-    x=XA
     X0_init=prep.convolute_x0(x,ca,cb)
     x=x-X0_init[0]
 
@@ -83,6 +120,8 @@ def x0(hist):
 	prep.plot(x,(nCA,nCB))
 #	prep.plot(Xa,(aCA,aCB))
 	prep.plt.show()
+    
+    Profil=nCA
 
 #    CB=prep.trans_data(aCB);
 #    CA=prep.trans_data(aCA);
@@ -101,17 +140,17 @@ def x0(hist):
 #    garbage,fit_A=prep.fit_data(X,CA,7);
 #    X,fit_Ai=prep.fit_data_inv(X,CA,7);
 
-    first_fit_A=prep.fit_data(x,nCA,order='linear')
-    first_fit_Ai=prep.fit_data(nCA,x,order='linear')
+    first_fit_A=prep.fit_data(x,Profil,order='linear')
+    first_fit_Ai=prep.fit_data(Profil,x,order='linear')
 
     if(TRYB):
 	prep.plt.title("fit xC")
-	prep.plot(nCA,(first_fit_Ai(nCA),),'-')
-	prep.plot(nCA,(x,),'.')
+	prep.plot(Profil,(first_fit_Ai(Profil),),'-')
+	prep.plot(Profil,(x,),'.')
 	prep.plt.show()
 	prep.plt.title("fit cx")
 	prep.plot(x,(first_fit_A(x),),'-')
-	prep.plot(x,(nCA,),'.')
+	prep.plot(x,(Profil,),'.')
 	prep.plt.show()
 
     X_MOVE=optimal(first_fit_Ai);
@@ -121,21 +160,23 @@ def x0(hist):
     xf=XF-X0_init[0]
 
 #   make all fits
-    fit_A=prep.fit_data(x,nCA,order='linear')
-    fit_Ai=prep.fit_data(nCA,x,order='linear')
+    fit_A=prep.fit_data(x,Profil,order='linear')
+    fit_Ai=prep.fit_data(Profil,x,order='linear')
     FIT.append(fit_Ai);FIT.append(fit_A);
 
     dyA=cal_poch(x,fit_A)
     fit_dy=prep.fit_data(x,dyA,order='linear')
     FIT.append(fit_dy);
+    
+    dy=fit_dy(x)
 
     if(TRYB):
 	xtoplt=np.ones_like(dyA)*X_MOVE
 	prep.plt.plot(xtoplt,dyA,'-')
-	prep.plot(x,(dyA,),'.-')
+	prep.plot(x,(dy,),'.-')
 	prep.plt.show()
 
-    for col in hist[7:]:
+    for col in hist[(5+TYPES):]:
 	col = col/TIME
 	fit=prep.fit_data(xf,col,order='linear')
 	FIT.append(fit)
@@ -150,7 +191,7 @@ def x0(hist):
     if(TRYB):
 	prep.plt.title("fits")
 	for f in FIT:
-	    prep.plot(x,(f(x),),'o')
+	    prep.plot(x,(f(x),),'-')
 	prep.plt.show()
 
     return 0
@@ -161,6 +202,7 @@ def diff():
     x=X_cent
     ai=FIT[0]
     a=FIT[1]
+    d=FIT[2]
     stech_scale=NORMA[0]; 
     YL=stech_scale[0]; YR=stech_scale[1];
     norma=YL-YR;
@@ -194,30 +236,37 @@ def diff():
 	OUT_VEL.write(" %f" % (i))
     OUT_VEL.write("\n")
 
-    STECH=[];DIFF=[];DER=[];X=[];
-    for stech in np.arange(0.01,1.0,0.01):
-	x_tmp=prep.functionXc(stech,ai)
-	der=cal_poch(x_tmp,a)
-	if(der_r == 0.0 and np.isfinite(der)):
-	    der_r=der
-	INT,err=quad(prep.functionXc,a=0.0, b=stech, args=(ai))
-	coef=-0.5*INT/der
+    STECH=[];DIFF=[];DER=[];X=[];INT=[];
+    for i in x:
+#	x_tmp=prep.functionXc(stech,ai)
+#	der=cal_poch(x_tmp,a)
+	der=d(i)
+	if(round(der,5) == 0.0):
+	    continue;
+#	print i,der
+	stech=prep.functionCx(i,a)
+	inte,err=quad(prep.functionXc,a=0.0, b=stech, args=(ai))
+	coef=-0.5*inte/der
 	corr=der/der_r
 	stech=YR+stech*norma
-	STECH.append(stech);DIFF.append(coef);DER.append(der);X.append(x_tmp);
+	STECH.append(stech);DIFF.append(coef);DER.append(der);X.append(i);INT.append(inte)
 #	print stech,INT,DER,coef
-	wynik=[x_tmp,stech,INT,der,coef,corr]
+	wynik=[i,stech,inte,der,coef,corr]
 	OUT_DIF.write("%f %f" % (step,time))
-	for i in wynik:
-	    OUT_DIF.write(" %f" % (i))
+	for j in wynik:
+	    OUT_DIF.write(" %f" % (j))
 	OUT_DIF.write("\n")
     OUT_DIF.write("\n")
 
     if(TRYB):
-	prep.plt.title('Poch:')
 	prep.plt.plot(X,prep.functionCx(X,a)); prep.plt.show();
+	prep.plt.title('Poch:')
 	prep.plt.plot(X,DER); prep.plt.show();
+	prep.plt.title('INT:')
+	prep.plt.plot(X,INT); prep.plt.show();
+	prep.plt.title('Coef:')
 	prep.plt.plot(X,DIFF); prep.plt.show();
+	prep.plt.plot(STECH,DIFF); prep.plt.show();
 
     return 0
 

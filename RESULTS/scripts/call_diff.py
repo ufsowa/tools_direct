@@ -11,8 +11,8 @@ import sys
 import os
 
 name=sys.argv[1]
-#new_st=int(sys.argv[2])
-#step=int(sys.argv[3])
+types=int(sys.argv[2])
+cumul=int(sys.argv[3])
 #DELTA=float(sys.argv[4])
 #pattern="*"+name+"*"
 
@@ -26,6 +26,7 @@ os.chdir(WORK_PATH)
 
 hist,new_st = prep.str2double(DATA)
 
+call.set((types,cumul))
 call.x0(hist)
 call.diff()
 

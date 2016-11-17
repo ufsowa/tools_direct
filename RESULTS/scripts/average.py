@@ -9,9 +9,10 @@ import libs.base as tools
 
 
 name=sys.argv[1]
-grid=float(sys.argv[2])
-step=float(sys.argv[3])
-no_points=float(sys.argv[4])
+types=int(sys.argv[2])
+grid=float(sys.argv[3])
+step=float(sys.argv[4])
+no_points=float(sys.argv[5])
 name_out=name.replace('step','avg')
 fout=open(name_out,'a')
 
@@ -21,33 +22,76 @@ time=np.mean(data[1])
 
 XF=data[2];
 X=data[3];
-
 V=data[4];
-A=data[5];
-B=data[6];
-TOT=A+B;
-ca=[float(x)/float(y) if y else float(0) for x,y in zip(A,TOT)]
-cb=[float(x)/float(y) if y else float(0) for x,y in zip(B,TOT)]
-TOT=A+B+V;cv=V/TOT;c=(A+B)/TOT
+ATOMS=[]; ALL=[]; TOT=[]; STECH=[];
+for i in np.arange(5,(5+types),1):
+    ATOMS.append(data[i])
 
-p0=np.median(X)
-x=np.arange(X[0],p0,0.1)
-CV=np.interp(x,X,cv)
-C=np.interp(x,X,c)
-bL=tools.convolute_x0(x,C,CV)
-x=np.arange(p0,X[-1],0.01)
-CV=np.interp(x,X,cv)
-C=np.interp(x,X,c)
-bP=tools.convolute_x0(x,C,CV)
-L=bL[0]+(bL[1])*2.5
-P=bP[0]-(bP[1])*2.5
-#SAMPLE_BORDER.append(L); SAMPLE_BORDER.append(P);
-#x=np.arange(L,P,dX)
-points = np.where((X > L)  & (X<P))
+ATOMS=np.array(ATOMS)
+
+#print ATOMS
+#V=data[4];
+#A=data[5];
+#B=data[6];
+#C=data[7];
+for i in ATOMS:
+    if(len(TOT)==0):
+	TOT=i
+    else:
+	TOT=TOT+i;
+TOT=np.array(TOT)
+#print TOT
+
+for i in ATOMS:
+    c=i/TOT;
+#[float(x)/float(y) if y else float(0) for x,y in zip(i,TOT)]
+    STECH.append(c)
+
+ALL=TOT+V;cv=V/ALL;c=TOT/ALL;
+
+STECH=np.array(STECH)
+
+L=X[0];P=X[-1];
+#plt.plot(X,XF,'x');
+
+CROSS=tools.cross(X,c,cv)
+#print CROSS, L, P
+if(len(CROSS)>0):
+    L=X[-1];P=X[0];
+
+for i in range(0,len(CROSS),1):
+    x0=CROSS[i];Ldx=X[0];Pdx=X[-1];
+    if((i+1)<len(CROSS)):
+	Pdx=x0+abs(x0+CROSS[i+1])/8.0
+    else:
+	Pdx=X[-1]
+
+    if((i-1)>=0):
+	Ldx=x0-abs(x0-CROSS[i-1])/8.0
+    else:
+	Ldx=X[0]
+    print "f:", i,x0,Ldx,Pdx
+    new_x=np.arange( Ldx,Pdx,0.1)
+
+    CV=np.interp(new_x,X,cv)
+    C=np.interp(new_x,X,c)
+#    plt.plot(new_x,CV);plt.plot(new_x,C);plt.show();
+    
+    b=tools.convolute_x0(new_x,C,CV)
+#    print b
+    tmpP=b[0]+(b[1])*2.5
+    tmpL=b[0]-(b[1])*2.5
+    if(tmpL<L):
+	L=tmpL
+    if(tmpP>P):
+	P=tmpP
+#    print tmpL,tmpP,L,P
+
+points = np.where((X >= L)  & (X<=P))
 x=X[points]
 xf=np.interp(x,X,XF)
 
-#plt.plot(X,XF,'x');plt.plot(x,xf,'o'); plt.show();
+#plt.plot(X,XF,'--');plt.plot(x,xf,'o'); plt.show();
 
 DATA=[]; nr_col=4;
 for col in data[nr_col:]:

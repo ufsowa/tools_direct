@@ -111,8 +111,11 @@ def fit_data(inx,iny,order=2):
 #    x=inx[ids]
 #    coef=np.polyfit(x,y,deg=order)
 #    fit=np.poly1d(coef)
-    fit=interp1d(inx,iny,kind=order,bounds_error=False,fill_value="extrapolate")
+    fill=0.0
+    if(order=='linear'):
+	fill="extrapolate"
 
+    fit=interp1d(inx,iny,kind=order,bounds_error=False,fill_value=fill)
     return fit
 
 def functionCx(x,fit,x0=0.0):
@@ -266,9 +269,25 @@ def splot(CA,CB,flag="min"):
 	    y.append(maxi(CA[i],CB[i]))
     return y
 
+def cross(x,f,g):
+#    x = np.arange(0, 1000)
+#    f = np.arange(0, 1000)
+#    g = np.sin(np.arange(0, 10, 0.01) * 2) * 1000
+#    plt.plot(x, f, '-')
+#    plt.plot(x, g, '-')
+
+    idx = np.argwhere(np.diff(np.sign(f - g)) != 0).reshape(-1) + 0
+
+#    plt.plot(x[idx], f[idx], 'ro')
+#    plt.show()
+    return x[idx]
+
 def convolute_x0(X,CA,CB,flag=True):
     y=splot(CA,CB)
-    return FWHM(X,y,flag)
+    if(y==0):
+	return 0;
+    else:
+	return FWHM(X,y,flag);
 
 def mini(x1,x2):
     a=abs(x1);b=abs(x2)
