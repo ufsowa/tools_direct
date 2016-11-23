@@ -74,8 +74,8 @@ function plot_v {
     gnuplot to_plot
 }
 
-#files=`ls *.vel`
-#plot_v $files
+files=`ls *.vel`
+plot_v $files
 
 files=`ls *.coef`
 plot_d $files

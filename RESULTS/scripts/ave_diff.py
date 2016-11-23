@@ -12,6 +12,8 @@ name=sys.argv[1]
 grid=float(sys.argv[2])
 step=float(sys.argv[3])
 points=float(sys.argv[4])
+st=float(sys.argv[5])
+ed=float(sys.argv[6])
 name_out=name.replace('all','avg')
 fout=open(name_out,'a')
 
@@ -21,10 +23,15 @@ data=np.loadtxt(name, unpack=True)
 #time=np.mean(data[1])
 
 x=data[3]
+
+#x=raw[st<=raw]
+#x=x[x<=ed]
 time=data[1]
+#time=np.interp(x,raw,time)
 
 DATA=[];nr_col=4;
 for col in data[4:]:
+#    y=np.interp(x,raw,col)
     y=col
     if(nr_col==4 or nr_col==6 or nr_col==7):
 	y=y/time
@@ -37,9 +44,9 @@ for col in data[4:]:
 
 #    tmp_x,tmp_y=tools.move_avg(myx,myy,0.1,0.01,3.0)
 #    new_x=tmp_x;new_y=tmp_y;
-#    new_x,new_y=tools.fit_data(x,y,1000,301,3)
+#    new_x,new_y=tools.fit_data(myx,myy,1000,301,3)
 #    new_x,new_y=tools.move_avg(new_x,new_y,1.0,0.5,2.0)
-#    new_x,new_y=tools.smooth_data(tmp_x,tmp_y,1000,301,3,0)
+#    new_x,new_y=tools.smooth_data(myx,myy,1000,301,3,0,"plot")
 
     if(len(DATA)==0):
 	DATA.append(new_x)

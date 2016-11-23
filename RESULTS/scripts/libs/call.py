@@ -237,14 +237,15 @@ def diff():
     OUT_VEL.write("\n")
 
     STECH=[];DIFF=[];DER=[];X=[];INT=[];
-    for i in x:
-#	x_tmp=prep.functionXc(stech,ai)
+#    for i in x:
+    for stech in np.arange(0.0,1.01,0.01):
+	i=prep.functionXc(stech,ai)
 #	der=cal_poch(x_tmp,a)
 	der=d(i)
 	if(round(der,5) == 0.0):
 	    continue;
 #	print i,der
-	stech=prep.functionCx(i,a)
+#	stech=prep.functionCx(i,a)
 	inte,err=quad(prep.functionXc,a=0.0, b=stech, args=(ai))
 	coef=-0.5*inte/der
 	corr=der/der_r
