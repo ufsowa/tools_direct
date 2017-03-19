@@ -12,8 +12,6 @@ name=sys.argv[1]
 grid=float(sys.argv[2])
 step=float(sys.argv[3])
 points=float(sys.argv[4])
-st=float(sys.argv[5])
-ed=float(sys.argv[6])
 name_out=name.replace('all','avg')
 fout=open(name_out,'a')
 
@@ -30,7 +28,7 @@ time=data[1]
 #time=np.interp(x,raw,time)
 
 DATA=[];nr_col=4;
-for col in data[4:]:
+for col in data[4:-1]:
 #    y=np.interp(x,raw,col)
     y=col
     if(nr_col==4 or nr_col==6 or nr_col==7):

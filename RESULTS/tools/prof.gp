@@ -32,7 +32,7 @@ function plot_Ns {
 	print FILES
 	
 	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
-	plot [45:60] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette notitle,\
+	plot [:] '$1' u (\$4):(\$6/(\$6+\$7)):2 w p pt 6 ps 1 palette notitle,\
 		'$2' u (\$4):(\$6/(\$6+\$7)):2 w l lc -1 t 'A',\
 		'$1' u (\$4):(\$7/(\$6+\$7)):2 w p pt 6 ps 1 palette notitle,\
 		'$2' u (\$4):(\$7/(\$6+\$7)):2 w l lc 1 t 'B'
@@ -71,20 +71,28 @@ function plot_Nv {
     fi
 }
 
-
 function plot_cv {
-    new_name=${1%%.*}.jpeg
+    new_name=${1%%.*}
     new_name=${new_name##*_}
-    gnuplot -e "
-	set terminal jpeg;
-	plot [:][:0.02] '$1' u 3:(\$4/(\$4+\$5+\$6)) w lp
-    " > $MY_PTH/$new_name.jpeg
+    echo "
+	FILES='$@'
+	print FILES
+	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
+	plot [:][:] for [ data in FILES ] data u 4:(\$5/(\$7+\$5+\$6)):2 w l palette notitle
+    pause -1
+    " > to_plot
+    gnuplot to_plot
 }
 
-#files=`ls *.avg`
+
+files=`ls *.avg`
 #plot_N $files
+plot_cv $files
+
 files=`ls *.step`
-plot_N $files
+#plot_N $files
+plot_cv 1000.step
+
 
 #for i in $files;
 #do

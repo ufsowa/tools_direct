@@ -4,26 +4,6 @@ MY_PTH=$PWD
 rm *.jpeg
 #cd ..
 
-function plot_d {
-    new_name=${1%%.*}
-    new_name=${new_name##*_}
-#    if [ $new_name -le 100 ]; then
-    echo "
-#	plot [0.1:0.9][:] '$1' u 4:((\$5+\$6)) w l
-#	plot '$1' u 4:5 w lp,'$1' u 4:6 w lp,'$1' u 4:(1.0/\$8) w lp
-
-#	plot [0.1:0.9] '$1' u (1.0-\$4):(-(16.0*\$6/\$5)/\$2) w lp
-	plot [:] '$1' u (\$3):(\$7/\$2) w lp
-#	plot [0.1:0.9] '$1' u 4:((\$7 - 1.0/\$8)) w lp
-
-	pause -1
-    " > to_plot
-    gnuplot to_plot
-
-#$MY_PTH/$new_name.jpeg
-#    fi
-}
-
 function plot_F {
     new_name=${1%%.*}
     new_name=${new_name##*_}
@@ -32,7 +12,7 @@ function plot_F {
 	print FILES
 	
 #	set palette model HSV defined ( 0 0 1 1, 1 1 1 1 )
-	plot [40:60] '$1' u 4:8 w p pt 6 t '$1',\
+	plot [:] '$1' u 4:8 w p pt 6 t '$1',\
 		'$2' u 4:8 w l t '$2',\
 		'$1' u 4:9 w p pt 6 ps 1 t '$1',\
 		'$2' u 4:9 w l t '$2',\
@@ -83,31 +63,9 @@ function plot_N {
     gnuplot to_plot
 }
 
-
-function plot_Nv {
-    new_name=${1%%.*}
-    new_name=${new_name##*_}
-    if [ $new_name -le 100 ]; then
-    gnuplot -e "
-	set terminal jpeg;
-	plot '$1' u ((\$5+\$6)/2.0):7 w lp
-    " > $MY_PTH/$new_name.jpeg
-    fi
-}
-
-
-function plot_cv {
-    new_name=${1%%.*}.jpeg
-    new_name=${new_name##*_}
-    gnuplot -e "
-	set terminal jpeg;
-	plot [:][:0.02] '$1' u 3:(\$4/(\$4+\$5+\$6)) w lp
-    " > $MY_PTH/$new_name.jpeg
-}
-
 #files=`ls *.avg`
 #plot_N $files
-files=`ls *.step`
+files=`ls 1000.step`
 #plot_Ns $files
 
 for i in $files;
